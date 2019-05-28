@@ -38,19 +38,25 @@ import proyectosqlite.componentes.Tarjeta;
 public class SQLConnection {
 
     
+    private static SQLConnection INSTANCE = null;
+    private File url = new File("PATH.db");
+    private String preurl = "jdbc:sqlite://";
+    private String username = "";
+    private String password = "";
+    /**
+ * devuelve una nueva conexion con los parametros cargados.
+ * @return 
+ * @throws SQLException 
+ */
+    
        private Connection getConexion() throws SQLException {
         Connection connection = DriverManager.getConnection(preurl + url.getAbsolutePath(), username, password);
 
         return connection;
     }
-    
-    private static SQLConnection INSTANCE = null;
-    private File url = new File("PATH.db");
-
-    private String preurl = "jdbc:sqlite://";
-    private String username = "";
-    private String password = "";
-
+/**
+ * Constructor privado para el SQLConnection
+ */
     private SQLConnection() {
         if (null == url || !url.canRead()) {
             System.out.println("Error, fichero no encontrado.");
@@ -67,7 +73,10 @@ public class SQLConnection {
 
         }
     }
-
+    /**
+     * Metodo para construir el unico el unico objeto de este Singleton. 
+     * @return devuelve el objeto SQLConnection
+     */
     public static SQLConnection getInstance() {
         if (null == INSTANCE) {
             INSTANCE = new SQLConnection();
@@ -82,7 +91,11 @@ public class SQLConnection {
         return getEtiquetas("");
 
     }
-
+/**
+ * Metodo para agregar una tarjeta a la tabla tarjetas
+ * @param tarjeta recive una tarjeta
+ * @return devuelve un true si lo ha hecho correctamente
+ */
     public boolean añadirTarjeta(Tarjeta tarjeta) {
         boolean hecho = false;
         try {
@@ -111,6 +124,77 @@ public class SQLConnection {
         return hecho;
     }
 
+    /**
+     * Metodo para actualizar una tarjeta a la tabla tarjetas
+     * @param tarjeta recive una tarjeta
+     * @return un true si lo ha hecho correctamente
+     */
+    public boolean updateTarjeta(Tarjeta tarjeta) {
+        boolean hecho = false;
+        try {
+
+            Connection connection = getConexion();
+
+            PreparedStatement preSt = connection.prepareStatement("UPDATE " + Tarjeta.getAlias_tabla() + " SET   " + Tarjeta.getAlias_nombre() + " = ? ," + Tarjeta.getAlias_ejemplo() + " = ? ," + Tarjeta.getAlias_descripcion() + " = ? WHERE "+Tarjeta.getAlias_idTarjeta() + " = ?");
+                                                                   
+            preSt.setString(1, tarjeta.getNombre());
+            preSt.setString(2, tarjeta.getEjemplo());
+            preSt.setString(3, tarjeta.getDescripcion());
+            preSt.setInt(4, tarjeta.getIdTarjeta());
+            System.out.println("prueba rs = " + preSt.toString());
+            preSt.executeUpdate();
+
+            // System.out.println(proy.toString());
+            preSt.close();
+            connection.close();
+            hecho = true;
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            hecho = false;
+        }
+
+        return hecho;
+    }
+    
+    
+    /**
+     * Metodo para eliminar de la base de datos una tarjeta
+     * @param tarjeta
+     * @return un true si lo ha hecho correctamente
+     */
+    public boolean deleteTarjeta(Tarjeta tarjeta) {
+        
+        // falta gestionar las etiquetas asociadas a esta tarjeta en etiquetasDeTarjetas para que tambien las elimine. 
+        boolean hecho = false;
+        try {
+
+            Connection connection = getConexion();
+
+            PreparedStatement preSt = connection.prepareStatement("DELETE FROM  " + Tarjeta.getAlias_tabla() + " WHERE "+Tarjeta.getAlias_idTarjeta() + " = ?");
+                                                                   
+            
+            preSt.setInt(1, tarjeta.getIdTarjeta());
+            System.out.println("prueba rs = " + preSt.toString());
+            preSt.executeUpdate();
+
+            
+            preSt.close();
+            connection.close();
+            hecho = true;
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            hecho = false;
+        }
+
+        return hecho;
+    }
+    /**
+     * Metodo que añade una etiqueta a la tabla etiqueta
+     * @param etiqueta recive una etiqueta
+     * @return devuelve true si ha sido correcto.
+     */
     public boolean añadirEtiqueta(Etiqueta etiqueta) {
         boolean hecho = false;
         try {
@@ -137,8 +221,12 @@ public class SQLConnection {
 
         return hecho;
     }
-
-    public ArrayList<Etiqueta> getEtiquetasdeTarjeta(Tarjeta tarj) {
+/**
+ * Metodo para conseguir las etiquetas asociadas a una tarjeta concreta, esta relacion se encuentra en la tabla etiquetasDeTarjetas.
+ * @param tarjeta recibe una tarjeta de la cual extrae el id.
+ * @return devuelve un arraylist de etiquetas.
+ */
+    public ArrayList<Etiqueta> getEtiquetasdeTarjeta(Tarjeta tarjeta) {
         ArrayList<Etiqueta> auxArrlist = new ArrayList<Etiqueta>();
         Etiqueta etiqaux;
         try {
@@ -148,7 +236,7 @@ public class SQLConnection {
                     + Etiqueta.getAlias_nombre() + "," + Etiqueta.getAlias_descripcion() + " FROM " + Etiqueta.getAlias_tabla() +
                     " WHERE " + Etiqueta.getAlias_idEtiqueta() + " IN (SELECT " + Etiqueta.getAlias_idEtiqueta() + " FROM etiquetasDeTarjetas WHERE " +
                     Tarjeta.getAlias_idTarjeta() + " = ?)");
-            preSt.setInt(1, tarj.getIdTarjeta());                                                                                                
+            preSt.setInt(1, tarjeta.getIdTarjeta());                                                                                                
 
             System.out.println("prueba rs = " + preSt.toString());
             ResultSet rs = preSt.executeQuery();
@@ -175,6 +263,11 @@ public class SQLConnection {
 
     }
 
+    /**
+     * Metodo que devuelve las etiquetas que coinciden con una busqueda
+     * @param BusquedaNombre
+     * @return 
+     */
     public ArrayList<Etiqueta> getEtiquetas(String BusquedaNombre) {
         ArrayList<Etiqueta> auxArrlist = new ArrayList<Etiqueta>();
         Etiqueta etiqaux;
@@ -209,53 +302,32 @@ public class SQLConnection {
 
     }
 
+    /**
+     * Metodo que devuelve las tarjetas que coinciden con una buasqueda
+     * @param BusquedaNombre
+     * @return 
+     */
     public ArrayList<Tarjeta> getTarjetas(String BusquedaNombre) {
-        ArrayList<Tarjeta> auxArrlist = new ArrayList<Tarjeta>();
-        Tarjeta etiqaux;
-        try {
-            Connection connection = getConexion();
-            String auxString = "SELECT " + Tarjeta.getAlias_idTarjeta() + "," + Tarjeta.getAlias_nombre() + "," + Tarjeta.getAlias_ejemplo() + "," + Tarjeta.getAlias_descripcion() + " FROM " + Tarjeta.getAlias_tabla() + " WHERE " + Tarjeta.getAlias_nombre() + " LIKE ? ";
-
-            PreparedStatement preSt = connection.prepareStatement(auxString);
-
-            preSt.setString(1, "%" + BusquedaNombre + "%");
-
-            System.out.println("prueba rs = " + preSt.toString());
-            ResultSet rs = preSt.executeQuery();
-
-            while (rs.next()) {
-
-                Integer idEtiqueta = rs.getInt(Tarjeta.getAlias_idTarjeta());
-                String nombre = rs.getString(Tarjeta.getAlias_nombre());
-                String ejemplo = rs.getString(Tarjeta.getAlias_ejemplo());
-                String descripcion = rs.getString(Tarjeta.getAlias_descripcion());
-
-                etiqaux = new Tarjeta(idEtiqueta, nombre, ejemplo, descripcion);
-                auxArrlist.add(etiqaux);
-
-            }
-            rs.close();
-            preSt.close();
-            connection.close();
-
-        } catch (SQLException ex) {
-            System.out.println(ex);
-
-        }
-        return auxArrlist;
-
+      return  getTarjetasFiltradas(BusquedaNombre,null);
+      
     }
-
+/**
+ * Metodo que devuelve las Tarjetas que estan asociadas con las etiquetas de la lista que se le envian, ademas de filtrar por el nombre de la tarjeta.
+ * @param BusquedaNombre  en el programa por ahora no se usa nunca.
+ * @param arrListEtiquetas
+ * @return 
+ */
     public ArrayList<Tarjeta> getTarjetasFiltradas(String BusquedaNombre, List<Etiqueta> arrListEtiquetas) {
         ArrayList<Tarjeta> auxArrlist = new ArrayList<Tarjeta>();
         Tarjeta etiqaux;
-        System.out.println("num" + arrListEtiquetas.size());
+        // consulta base
         try {
             Connection connection = getConexion();
             String auxConsulta = "SELECT " + Tarjeta.getAlias_idTarjeta() + "," + Tarjeta.getAlias_nombre() + 
                     "," + Tarjeta.getAlias_ejemplo() + "," + Tarjeta.getAlias_descripcion() + " FROM " + 
                     Tarjeta.getAlias_tabla() + " WHERE " + Tarjeta.getAlias_nombre() + " LIKE ? ";
-
+           // si la lista no es nula añado un limitante mas a la consulta para que filtre por las etiquetas.
+            if(arrListEtiquetas != null){
             for (int i = 0; i < arrListEtiquetas.size(); i++) {
                 if (i == 0) {
                     auxConsulta = auxConsulta + " AND ( " + Tarjeta.getAlias_idTarjeta() + " IN (SELECT " + Tarjeta.getAlias_idTarjeta() 
@@ -270,14 +342,16 @@ public class SQLConnection {
                     auxConsulta = auxConsulta + "))";
                 }
 
-            }
+            }}
             System.out.println("auxC" + auxConsulta);
             PreparedStatement preSt = connection.prepareStatement(auxConsulta);
             preSt.setString(1, "%" + BusquedaNombre + "%");
+           if(arrListEtiquetas != null){
             for (int i = 0; i < arrListEtiquetas.size(); i++) {
                 preSt.setInt(i + 2, arrListEtiquetas.get(i).getIdEtiqueta());
 
             }
+           }
 
             System.out.println("prueba rs = " + preSt);
             ResultSet rs = preSt.executeQuery();
@@ -304,7 +378,10 @@ public class SQLConnection {
         return auxArrlist;
 
     }
-
+/**
+ * Metodo para generar la tabla a partir de un fichero sql, parte el fichero en consultas y los va agregando a un batch, luego lo ejecuta.
+ * @param file 
+ */
     public void EjecutarSQLFile(File file) {
         System.out.println(url.getAbsolutePath());
         ArrayList<String> consultas = new ArrayList<>();
@@ -357,7 +434,10 @@ public class SQLConnection {
             }
         }
     }
-
+/**
+ * Test de conexion para verificar que funciona bien la base de datos.
+ * @return 
+ */
     public boolean PruebaConexion() {
         boolean prueba = false;
         try {

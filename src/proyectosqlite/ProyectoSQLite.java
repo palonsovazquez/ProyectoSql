@@ -16,7 +16,7 @@ import proyectosqlite.GUI.FiltradorTarjetas;
  * @author Pablo Alonso Vazquez <pav.vigo@gmail.com>
  */
 public class ProyectoSQLite {
-
+public static FiltradorTarjetas filTar;
     /**
      * @param args the command line arguments
      */
@@ -25,7 +25,9 @@ public class ProyectoSQLite {
 //     File fil = new File("/home/pablo/NetBeansProjects/prog/proyectoSQLite/creacionTablas.sql");
 //     x.EjecutarSQLFile(fil);
 //        
-        new FiltradorTarjetas().setVisible(true);
+       filTar = new FiltradorTarjetas();
+       filTar.setVisible(true);
+       
         
     }
     

@@ -55,6 +55,8 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jlist_Etiquetas1 = new javax.swing.JList<>();
         jButton1 = new javax.swing.JButton();
+        bot_actualizar = new javax.swing.JButton();
+        bot_borrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,6 +106,20 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
             }
         });
 
+        bot_actualizar.setText("actualizar Tarjeta");
+        bot_actualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bot_actualizarActionPerformed(evt);
+            }
+        });
+
+        bot_borrar.setText("Borrar Tarjeta");
+        bot_borrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bot_borrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -119,7 +135,13 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
                         .addComponent(jButton1))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(bot_actualizar)
+                            .addComponent(bot_borrar))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -130,7 +152,11 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
                     .addComponent(bot_Filtrar)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton1)
+                            .addComponent(bot_actualizar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bot_borrar)))
                 .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -161,12 +187,40 @@ jlist_Etiquetas.setModel(new JList<Etiqueta>(arrayEtiq).getModel()
         arrList_tarjetas = SQLConnection.getInstance().getTarjetasFiltradas("",jlist_Etiquetas1.getSelectedValuesList());
         actualizarTabla(arrList_tarjetas);
         
-        ;
+        
     }//GEN-LAST:event_bot_FiltrarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       new EditorTarjeta().setVisible(true);
+      editTar = new EditorTarjeta();
+              editTar.setVisible(true);
+              this.setEnabled(false);
+              
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void bot_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_actualizarActionPerformed
+        int x =jTaTarjetas.getSelectedRow();
+        System.out.println("-.,-"+x);
+       
+        
+        
+       
+if(x != -1){
+editTar = new EditorTarjeta(arrList_tarjetas.get(x));
+editTar.setVisible(true);
+this.setEnabled(false);
+this.setFocusable(false);
+}
+
+
+    
+    }//GEN-LAST:event_bot_actualizarActionPerformed
+
+    private void bot_borrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_borrarActionPerformed
+        int x =jTaTarjetas.getSelectedRow();
+        SQLConnection.getInstance().deleteTarjeta(arrList_tarjetas.get(x));
+        
+        actualizarTabla();
+    }//GEN-LAST:event_bot_borrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -205,6 +259,8 @@ jlist_Etiquetas.setModel(new JList<Etiqueta>(arrayEtiq).getModel()
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bot_Filtrar;
+    private javax.swing.JButton bot_actualizar;
+    private javax.swing.JButton bot_borrar;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -214,4 +270,10 @@ jlist_Etiquetas.setModel(new JList<Etiqueta>(arrayEtiq).getModel()
     private javax.swing.JList<Etiqueta> jlist_Etiquetas1;
     // End of variables declaration//GEN-END:variables
  private ArrayList<Tarjeta> arrList_tarjetas;
+ private EditorTarjeta editTar;
+
+    private void actualizarTabla() {
+        arrList_tarjetas = SQLConnection.getInstance().getTarjetas("");
+        actualizarTabla(arrList_tarjetas);
+    }
 }
