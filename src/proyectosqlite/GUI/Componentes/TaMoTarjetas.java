@@ -10,7 +10,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
-import proyectosqlite.componentes.Tarjeta;
+import proyectosqlite.modelo.Tarjeta;
 
 /**
  *

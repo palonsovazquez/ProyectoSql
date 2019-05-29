@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.table.TableModel;
-import proyectosqlite.Data.SQL.SQLConnection;
+import proyectosqlite.dao.SQLConnection;
 import proyectosqlite.GUI.Componentes.TaMoTarjetas;
-import proyectosqlite.componentes.Etiqueta;
-import proyectosqlite.componentes.Tarjeta;
+import proyectosqlite.modelo.Etiqueta;
+import proyectosqlite.modelo.Tarjeta;
 
 /**
  *

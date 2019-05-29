@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proyectosqlite.Data.SQL;
+package proyectosqlite.dao;
 
-import proyectosqlite.componentes.Etiqueta;
+import proyectosqlite.modelo.Etiqueta;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,8 +21,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import proyectosqlite.componentes.Etiqueta;
-import proyectosqlite.componentes.Tarjeta;
+import proyectosqlite.modelo.Etiqueta;
+import proyectosqlite.modelo.Tarjeta;
 
 /**
  *

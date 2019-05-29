@@ -5,8 +5,8 @@
  */
 package proyectosqlite.GUI;
 
-import proyectosqlite.Data.SQL.SQLConnection;
-import proyectosqlite.componentes.Tarjeta;
+import proyectosqlite.dao.SQLConnection;
+import proyectosqlite.modelo.Tarjeta;
 
 /**
  *

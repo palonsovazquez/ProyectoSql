@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package proyectosqlite;
-import proyectosqlite.Data.SQL.SQLConnection;
+import proyectosqlite.dao.SQLConnection;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
