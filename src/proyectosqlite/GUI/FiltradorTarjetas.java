@@ -9,8 +9,12 @@ import java.util.ArrayList;
 import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.table.TableModel;
+import proyectosqlite.Export.ExportadorHTML;
 import proyectosqlite.dao.SQLConnection;
 import proyectosqlite.GUI.Componentes.TaMoTarjetas;
+import proyectosqlite.dao.SQL_Etiquetas;
+import proyectosqlite.dao.SQL_EtiquetasDeTarjetas;
+import proyectosqlite.dao.SQL_Tarjetas;
 import proyectosqlite.modelo.Etiqueta;
 import proyectosqlite.modelo.Tarjeta;
 
@@ -33,9 +37,9 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
         
         
     }
-    public FiltradorTarjetas() {
+    public  FiltradorTarjetas() {
         initComponents();
-        actualizarTabla(SQLConnection.getInstance().getTarjetas(""));
+        actualizarTabla(SQL_Tarjetas.getTarjetas(""));
     }
 
     /**
@@ -57,6 +61,8 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         bot_actualizar = new javax.swing.JButton();
         bot_borrar = new javax.swing.JButton();
+        botSinFiltros = new javax.swing.JButton();
+        bot_ExpHTML = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,7 +84,7 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTaTarjetas);
 
-        ArrayList<Etiqueta> arrLEtiqueta= SQLConnection.getInstance().getEtiquetas();
+        ArrayList<Etiqueta> arrLEtiqueta= SQL_Etiquetas.getEtiquetas();
         Etiqueta[] arrayEtiq = new Etiqueta[arrLEtiqueta.size()];
         arrayEtiq = arrLEtiqueta.toArray(arrayEtiq);
         jlist_Etiquetas.setModel(new JList<Etiqueta>(arrayEtiq).getModel()
@@ -92,7 +98,7 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
             }
         });
 
-        ArrayList<Etiqueta> arrLEtiquetaCompleta= SQLConnection.getInstance().getEtiquetas();
+        ArrayList<Etiqueta> arrLEtiquetaCompleta= SQL_Etiquetas.getEtiquetas();
         Etiqueta[] arrayEtiqCompleta = new Etiqueta[arrLEtiquetaCompleta.size()];
         arrayEtiqCompleta = arrLEtiquetaCompleta.toArray(arrayEtiqCompleta);
         jlist_Etiquetas1.setModel(new JList<Etiqueta>(arrayEtiqCompleta).getModel()
@@ -120,6 +126,20 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
             }
         });
 
+        botSinFiltros.setText("Sin Filtros");
+        botSinFiltros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botSinFiltrosActionPerformed(evt);
+            }
+        });
+
+        bot_ExpHTML.setText("Exportador Html");
+        bot_ExpHTML.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bot_ExpHTMLActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,9 +150,14 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bot_Filtrar)
-                        .addGap(233, 233, 233)
-                        .addComponent(jButton1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bot_Filtrar)
+                                    .addComponent(botSinFiltros))
+                                .addGap(214, 214, 214)
+                                .addComponent(jButton1))
+                            .addComponent(bot_ExpHTML)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,7 +174,12 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bot_Filtrar)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(bot_Filtrar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botSinFiltros)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bot_ExpHTML))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -174,7 +204,7 @@ public class FiltradorTarjetas extends javax.swing.JFrame {
         
         
         
-ArrayList<Etiqueta> arrLEtiqueta= SQLConnection.getInstance().getEtiquetasdeTarjeta(arrList_tarjetas.get(x));
+ArrayList<Etiqueta> arrLEtiqueta= SQL_EtiquetasDeTarjetas.getEtiquetasdeTarjeta(arrList_tarjetas.get(x));
 
 Etiqueta[] arrayEtiq = new Etiqueta[arrLEtiqueta.size()];
 arrayEtiq = arrLEtiqueta.toArray(arrayEtiq);
@@ -184,8 +214,10 @@ jlist_Etiquetas.setModel(new JList<Etiqueta>(arrayEtiq).getModel()
     }//GEN-LAST:event_jTaTarjetasMouseReleased
 
     private void bot_FiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_FiltrarActionPerformed
-        arrList_tarjetas = SQLConnection.getInstance().getTarjetasFiltradas("",jlist_Etiquetas1.getSelectedValuesList());
+        arrList_tarjetas = SQL_Tarjetas.getTarjetasFiltradas("",jlist_Etiquetas1.getSelectedValuesList());
+        
         actualizarTabla(arrList_tarjetas);
+        
         
         
     }//GEN-LAST:event_bot_FiltrarActionPerformed
@@ -217,10 +249,21 @@ this.setFocusable(false);
 
     private void bot_borrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_borrarActionPerformed
         int x =jTaTarjetas.getSelectedRow();
-        SQLConnection.getInstance().deleteTarjeta(arrList_tarjetas.get(x));
+        SQL_Tarjetas.deleteTarjeta(arrList_tarjetas.get(x));
         
         actualizarTabla();
     }//GEN-LAST:event_bot_borrarActionPerformed
+
+    private void botSinFiltrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botSinFiltrosActionPerformed
+    arrList_tarjetas = SQL_Tarjetas.getTarjetas();
+        
+        actualizarTabla(arrList_tarjetas);
+    }//GEN-LAST:event_botSinFiltrosActionPerformed
+
+    private void bot_ExpHTMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_ExpHTMLActionPerformed
+        ExportadorHTML.ExportarHTML(arrList_tarjetas);
+         
+    }//GEN-LAST:event_bot_ExpHTMLActionPerformed
 
     /**
      * @param args the command line arguments
@@ -258,6 +301,8 @@ this.setFocusable(false);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botSinFiltros;
+    private javax.swing.JButton bot_ExpHTML;
     private javax.swing.JButton bot_Filtrar;
     private javax.swing.JButton bot_actualizar;
     private javax.swing.JButton bot_borrar;
@@ -273,7 +318,7 @@ this.setFocusable(false);
  private EditorTarjeta editTar;
 
     private void actualizarTabla() {
-        arrList_tarjetas = SQLConnection.getInstance().getTarjetas("");
+        arrList_tarjetas = SQL_Tarjetas.getTarjetas("");
         actualizarTabla(arrList_tarjetas);
     }
 }

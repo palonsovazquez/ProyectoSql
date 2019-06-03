@@ -72,6 +72,10 @@ public class Tarjeta {
 
     }
 
+    public Tarjeta() {
+        
+    }
+
     public Integer getIdTarjeta() {
         return idTarjeta;
     }

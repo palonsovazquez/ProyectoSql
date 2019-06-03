@@ -25,7 +25,11 @@ public static FiltradorTarjetas filTar;
 //     File fil = new File("/home/pablo/NetBeansProjects/prog/proyectoSQLite/creacionTablas.sql");
 //     x.EjecutarSQLFile(fil);
 //        
-       filTar = new FiltradorTarjetas();
+
+        
+        SQLConnection.getInstance().crearDefaults();
+        SQLConnection.getInstance().setUrl(new File("data"+File.separator+"BD.db"));
+filTar = new FiltradorTarjetas();
        filTar.setVisible(true);
        
         

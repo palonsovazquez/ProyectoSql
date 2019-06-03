@@ -5,7 +5,14 @@
  */
 package proyectosqlite.GUI;
 
+import java.util.ArrayList;
+import javax.swing.JList;
+import javax.swing.ListModel;
 import proyectosqlite.dao.SQLConnection;
+import proyectosqlite.dao.SQL_Etiquetas;
+import proyectosqlite.dao.SQL_EtiquetasDeTarjetas;
+import proyectosqlite.dao.SQL_Tarjetas;
+import proyectosqlite.modelo.Etiqueta;
 import proyectosqlite.modelo.Tarjeta;
 
 /**
@@ -13,27 +20,60 @@ import proyectosqlite.modelo.Tarjeta;
  * @author Pablo Alonso Vazquez <pav.vigo@gmail.com>
  */
 public class EditorTarjeta extends javax.swing.JFrame {
-private Tarjeta tarjeta = new Tarjeta(null,null,null,null);
+
+    private Tarjeta tarjeta = new Tarjeta(null, null, null, null);
+
     /**
      * Creates new form EditorTarjeta
      */
     public EditorTarjeta() {
         initComponents();
         this.setAlwaysOnTop(true);
+
         this.jla_Id.setText("id= ");
     }
-    
-public EditorTarjeta(Tarjeta tar){
-     initComponents();
-     this.setAlwaysOnTop(true);
-    tarjeta = tar;
-    this.jla_Id.setText("id= "+ tarjeta.getIdTarjeta());
-  this.jtf_Nombre.setText(tarjeta.getNombre());
-  this.jta_Ejemplo.setText(tarjeta.getEjemplo());
-  this.jta_Descripcion.setText(tarjeta.getDescripcion());
-    
-    
-}
+
+    public EditorTarjeta(Tarjeta tar) {
+        initComponents();
+        this.setAlwaysOnTop(true);
+
+        actualizarDatos(tar);
+
+    }
+
+    private Tarjeta adquirirDatos() {
+      Tarjeta tarjeta= new Tarjeta();
+        
+        tarjeta.setIdTarjeta(this.tarjeta.getIdTarjeta());
+        tarjeta.setNombre(jtf_Nombre.getText());
+        tarjeta.setEjemplo(jta_Ejemplo.getText());
+        tarjeta.setDescripcion(jta_Descripcion.getText());
+
+        return tarjeta;
+    }
+
+    private void actualizarDatos(Tarjeta tar) {
+        tarjeta = tar;
+        this.jla_Id.setText("id= " + tarjeta.getIdTarjeta());
+        this.jtf_Nombre.setText(tarjeta.getNombre());
+        this.jta_Ejemplo.setText(tarjeta.getEjemplo());
+        this.jta_Descripcion.setText(tarjeta.getDescripcion());
+        jlist_Etiquetas.setModel(adquirirEtiquetas());
+
+    }
+
+    private ListModel<Etiqueta> adquirirEtiquetas() {
+
+       
+        ArrayList<Etiqueta> arrLEtiqueta = SQL_EtiquetasDeTarjetas.getEtiquetasdeTarjeta(tarjeta);
+        Etiqueta[] arrayEtiq = new Etiqueta[arrLEtiqueta.size()];
+
+        arrayEtiq = arrLEtiqueta.toArray(arrayEtiq);
+        System.out.println(arrayEtiq.length);
+        return new JList<Etiqueta>(arrayEtiq).getModel();
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -54,6 +94,11 @@ public EditorTarjeta(Tarjeta tar){
         jButton1 = new javax.swing.JButton();
         jla_Id = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jlist_Etiquetas = new javax.swing.JList<>();
+        bot_Borrar_Etiquetas = new javax.swing.JButton();
+        jcb_ListaEtiquetas = new javax.swing.JComboBox<Etiqueta>();
+        bot_añadirEtiqueta = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -92,6 +137,31 @@ public EditorTarjeta(Tarjeta tar){
             }
         });
 
+        ArrayList<Etiqueta> arrLEtiqueta= new ArrayList<Etiqueta>();//SQL_Etiquetas.getEtiquetasdeTarjeta(tarjeta);
+        Etiqueta[] arrayEtiq = new Etiqueta[arrLEtiqueta.size()];
+        arrayEtiq = arrLEtiqueta.toArray(arrayEtiq);
+        jlist_Etiquetas.setModel(new JList<Etiqueta>(arrayEtiq).getModel()
+        );
+        jScrollPane3.setViewportView(jlist_Etiquetas);
+
+        bot_Borrar_Etiquetas.setText("Borrar Etiqueta");
+        bot_Borrar_Etiquetas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bot_Borrar_EtiquetasActionPerformed(evt);
+            }
+        });
+
+        ArrayList<Etiqueta> etiquetas = SQL_Etiquetas.getEtiquetas();
+        Etiqueta[] eti =etiquetas.toArray(new Etiqueta[etiquetas.size()]);
+        jcb_ListaEtiquetas.setModel(new javax.swing.DefaultComboBoxModel<Etiqueta>(eti));
+
+        bot_añadirEtiqueta.setText("Añadir Etiqueta");
+        bot_añadirEtiqueta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bot_añadirEtiquetaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,20 +171,35 @@ public EditorTarjeta(Tarjeta tar){
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jtf_Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jla_Id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addContainerGap(20, Short.MAX_VALUE))
+                                .addComponent(jtf_Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2)
+                            .addComponent(jScrollPane1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jla_Id, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton2))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jcb_ListaEtiquetas, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bot_Borrar_Etiquetas)
+                                    .addComponent(bot_añadirEtiqueta))
+                                .addContainerGap(205, Short.MAX_VALUE))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -127,16 +212,26 @@ public EditorTarjeta(Tarjeta tar){
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jcb_ListaEtiquetas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bot_añadirEtiqueta)))
+                    .addComponent(bot_Borrar_Etiquetas))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -144,13 +239,18 @@ public EditorTarjeta(Tarjeta tar){
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        tarjeta = new Tarjeta(null,jtf_Nombre.getText(),jta_Ejemplo.getText(),jta_Descripcion.getText());
-        SQLConnection.getInstance().añadirTarjeta(tarjeta);
+        //nueva tarjeta.
+        tarjeta = adquirirDatos();
+        tarjeta.setIdTarjeta(null);
+        SQL_Tarjetas.añadirTarjeta(tarjeta);
+        actualizarDatos(SQL_Tarjetas.getUltimaTarjeta());
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
- tarjeta = new Tarjeta(this.tarjeta.getIdTarjeta(),jtf_Nombre.getText(),jta_Ejemplo.getText(),jta_Descripcion.getText());
-        SQLConnection.getInstance().updateTarjeta(tarjeta);        // TODO add your handling code here:
+        // actualizar tarjeta
+        tarjeta = adquirirDatos();
+        SQL_Tarjetas.updateTarjeta(tarjeta);        // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -158,6 +258,22 @@ public EditorTarjeta(Tarjeta tar){
         proyectosqlite.ProyectoSQLite.filTar.setEnabled(true);
         proyectosqlite.ProyectoSQLite.filTar.setFocusable(true);
     }//GEN-LAST:event_formWindowClosing
+
+    private void bot_añadirEtiquetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_añadirEtiquetaActionPerformed
+        SQL_EtiquetasDeTarjetas.añadirEtiquetaATarjeta(tarjeta, (Etiqueta) jcb_ListaEtiquetas.getSelectedItem());
+        jlist_Etiquetas.setModel(adquirirEtiquetas());
+        jScrollPane3.setViewportView(jlist_Etiquetas);
+
+
+    }//GEN-LAST:event_bot_añadirEtiquetaActionPerformed
+
+    private void bot_Borrar_EtiquetasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_Borrar_EtiquetasActionPerformed
+        System.out.println("eti=" + jlist_Etiquetas.getSelectedIndex());
+        SQL_EtiquetasDeTarjetas.deleteEtiquetaDeTarjeta((Etiqueta) jlist_Etiquetas.getSelectedValue(), tarjeta);
+        jlist_Etiquetas.setModel(adquirirEtiquetas());
+        jScrollPane3.setViewportView(jlist_Etiquetas);
+
+    }//GEN-LAST:event_bot_Borrar_EtiquetasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -195,6 +311,8 @@ public EditorTarjeta(Tarjeta tar){
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bot_Borrar_Etiquetas;
+    private javax.swing.JButton bot_añadirEtiqueta;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -202,7 +320,10 @@ public EditorTarjeta(Tarjeta tar){
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JComboBox<Etiqueta> jcb_ListaEtiquetas;
     private javax.swing.JLabel jla_Id;
+    private javax.swing.JList<Etiqueta> jlist_Etiquetas;
     private javax.swing.JTextArea jta_Descripcion;
     private javax.swing.JTextArea jta_Ejemplo;
     private javax.swing.JTextField jtf_Nombre;

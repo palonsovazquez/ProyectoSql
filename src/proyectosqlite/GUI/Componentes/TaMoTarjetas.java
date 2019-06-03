@@ -17,7 +17,8 @@ import proyectosqlite.modelo.Tarjeta;
  * @author pav_g
  */
 public class TaMoTarjetas extends AbstractTableModel {
-
+    public String[] nombresColumna = {"Id", "Nombre", "Ejemplo","Descripcion"};
+    ArrayList<Tarjeta> dataTarjeta;
     public ArrayList<Tarjeta> getDataTarjeta() {
         return dataTarjeta;
     }
@@ -34,14 +35,14 @@ public class TaMoTarjetas extends AbstractTableModel {
         this.nombresColumna = nombresColumna;
     }
 
-    ArrayList<Tarjeta> dataTarjeta;
+    
 
     public TaMoTarjetas(ArrayList<Tarjeta> dataTarjetas) {
         dataTarjeta = dataTarjetas;
 
     }
 
-    public String[] nombresColumna = {"Id", "Nombre", "Ejemplo","Descripcion"};
+    
 
     @Override
     public int getRowCount() {

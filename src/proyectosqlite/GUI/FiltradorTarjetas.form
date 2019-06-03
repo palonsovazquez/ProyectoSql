@@ -29,9 +29,17 @@
                   <Group type="102" attributes="0">
                       <Component id="jScrollPane3" min="-2" pref="174" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="bot_Filtrar" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="233" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="bot_Filtrar" min="-2" max="-2" attributes="0"/>
+                                  <Component id="botSinFiltros" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="214" max="-2" attributes="0"/>
+                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="bot_ExpHTML" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <Component id="jScrollPane1" min="-2" pref="542" max="-2" attributes="0"/>
               </Group>
@@ -55,7 +63,13 @@
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane3" min="-2" pref="175" max="-2" attributes="0"/>
-                  <Component id="bot_Filtrar" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="bot_Filtrar" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="botSinFiltros" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="bot_ExpHTML" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -115,7 +129,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList&lt;Etiqueta&gt; arrLEtiqueta= SQLConnection.getInstance().getEtiquetas();&#xa;Etiqueta[] arrayEtiq = new Etiqueta[arrLEtiqueta.size()];&#xa;arrayEtiq = arrLEtiqueta.toArray(arrayEtiq);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList&lt;Etiqueta&gt; arrLEtiqueta= SQL_Etiquetas.getEtiquetas();&#xa;Etiqueta[] arrayEtiq = new Etiqueta[arrLEtiqueta.size()];&#xa;arrayEtiq = arrLEtiqueta.toArray(arrayEtiq);"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Etiqueta&gt;"/>
           </AuxValues>
         </Component>
@@ -143,7 +157,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList&lt;Etiqueta&gt; arrLEtiquetaCompleta= SQLConnection.getInstance().getEtiquetas();&#xa;Etiqueta[] arrayEtiqCompleta = new Etiqueta[arrLEtiquetaCompleta.size()];&#xa;arrayEtiqCompleta = arrLEtiquetaCompleta.toArray(arrayEtiqCompleta);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ArrayList&lt;Etiqueta&gt; arrLEtiquetaCompleta= SQL_Etiquetas.getEtiquetas();&#xa;Etiqueta[] arrayEtiqCompleta = new Etiqueta[arrLEtiquetaCompleta.size()];&#xa;arrayEtiqCompleta = arrLEtiquetaCompleta.toArray(arrayEtiqCompleta);"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Etiqueta&gt;"/>
           </AuxValues>
         </Component>
@@ -171,6 +185,22 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bot_borrarActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="botSinFiltros">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Sin Filtros"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botSinFiltrosActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="bot_ExpHTML">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Exportador Html"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bot_ExpHTMLActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
